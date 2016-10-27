@@ -11,7 +11,7 @@ def main(argv):
     numwebclients = 0
     numservers = 1
     try:
-        opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
+        opts, args = getopt.getopt(argv,"hi:o:s:")
     except getopt.GetoptError:
        print 'test.py -i <numclientstotal> -o <numwebclients> -s <numservers>'
        sys.exit(2)

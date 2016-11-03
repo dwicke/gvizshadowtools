@@ -7,9 +7,9 @@ import sys, getopt
 def main(argv):
     simStart = 1200
     simlength = 2400
-    numclients = 1
-    numwebclients = 0
-    numservers = 1
+    numclients = 40
+    numwebclients = 30
+    numservers = 3
     try:
         opts, args = getopt.getopt(argv,"hi:o:s:")
     except getopt.GetoptError:

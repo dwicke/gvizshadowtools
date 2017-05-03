@@ -92,7 +92,7 @@ def main(argv):
 
 
 
-        np.savetxt('serverdata.txt', serverbytedata, fmt="%i")
+        #np.savetxt('serverdata.txt', serverbytedata, fmt="%i")
         np.savetxt('bulkclientdata.txt', bulkclientbytedata, fmt="%i")
         np.savetxt('clientdata.txt', clientbytedata, fmt="%i")
         np.savetxt('procserverdata.txt', procserverbytedata, fmt="%i")

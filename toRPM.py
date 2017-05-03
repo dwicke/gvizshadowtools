@@ -42,6 +42,16 @@ def main(argv):
 				td.write(data + "\n")
 				data = "2"
 		td.close()
+	with open('serverdata.txt') as f:
+		td =  open('rpmserverdata.txt', 'w')
+		count = 0
+		data = ""
+		for line in f:
+			count = count + 1
+			data += " " + line.strip("\n")
+			if (count % 2400) == 0:
+				td.write(data + "\n")
+		td.close()
 
 if __name__ == "__main__":
 	main(sys.argv[1:])

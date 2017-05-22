@@ -10,7 +10,7 @@
 
 import json
 import numpy as np
-import sys, getopt, re
+import sys, getopt, re, os
 
 def main(argv):
     simStart = 1200
@@ -31,37 +31,27 @@ def main(argv):
 
     
     with open('server.stats.tgen.json') as json_data:
+    #with open('testing.json') as json_data:
         data = json.load(json_data)
 
-        serverbytedata = [0] * (simlength + 1) * numservers
+        serverbytedata = np.array([])
         
 
         for key, clientdata in data['nodes'].iteritems():
-
           
             serverid = int(key.split("server")[1]) - 1
-            #print("Server id = {}".format(serverid))
-            for clientkey, clientval in data['nodes'][key].iteritems():
-            	if (re.search("webclient", clientkey) is None and re.search("bulkclient", clientkey) is None):
-            		if (int(clientkey) >= 1200):
-            			serverbytedata[(int(clientkey) + 1) - simStart + serverid * (simlength + 1)] = int(clientval)
-            			#print("for server id: {} client key: {} clientval {}".format(serverid, clientkey, clientval))
-             	else:
-             		#print("its a check! {}".format(clientkey))
-             		if (int(clientval) == 1 and re.search("webclient", clientkey) is not None):
-             			serverbytedata[serverid * (simlength + 1) ] = serverbytedata[serverid * (simlength + 1)] + 1
-             		if (int(clientval) == 1 and re.search("bulkclient", clientkey) is not None):
-             			serverbytedata[serverid * (simlength + 1)] = serverbytedata[serverid * (simlength + 1)] + 1
-
-             #   print(clientkey)
-                    # print(timestamp)
-                    # for numBytes in bytesArray:
-                    #     print(numBytes)
-                    #     serverbytedata[int(timestamp) - simStart + serverid * simlength] += int(numBytes)
-     
-
-
-        np.savetxt('serverdata.txt', serverbytedata, fmt="%i")
+            curServerData = np.array([1])
+            #print ("server id {}".format(serverid))
+            for client, val in clientdata.iteritems():
+                if client == "bulkclient":
+                    #print("bulkclient val = {}".format(val))
+                    curServerData[0] = 2
+                elif client != "webclient":
+                    curServerData = np.concatenate((curServerData,val))
+            newpath = r'serverdata' 
+            if not os.path.exists(newpath):
+                os.makedirs(newpath)
+            np.savetxt("serverdata/server{}.txt".format(serverid), curServerData, fmt="%i")
 
 
 

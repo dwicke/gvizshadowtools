@@ -10,11 +10,10 @@
 
 import json
 import numpy as np
-import sys, getopt, re
+import sys, getopt, re, copy
 
 def main(argv):
-    simStart = 1200
-    simlength = 2400
+    simlength = 240
     numservers = 800
     try:
         opts, args = getopt.getopt(argv,"hs:")
@@ -33,25 +32,38 @@ def main(argv):
     with open('server.stats.tgen.json') as json_data:
         data = json.load(json_data)
 
-        serverbytedata = [0] * (simlength + 1) * numservers
-        
+        serverbytedata = []#[0] * (30*simlength + 1) * numservers
+        print("Serverdata = {}".format(len(serverbytedata)))
 
         for key, clientdata in data['nodes'].iteritems():
 
           
             serverid = int(key.split("server")[1]) - 1
+            numClients = len(data['nodes'][key].items()) - 1 # minus one for the class of the server
+            #print("{} has {} clients and is of class {}".format(key, numClients, data['nodes'][key]['class']))
+            #serverbytedata[serverid*(30*simlength)] = data['nodes'][key]['class']
+            serverbytedata.append(data['nodes'][key]['class'])
+            r = copy.deepcopy(data['nodes'][key])
+            del r['class']
+            #del data['nodes'][key]['class']
+            l = r.values()
+            #print("start {} and end {}".format(serverid*(30*simlength) + 1, serverid*(30*simlength) + 1 + (numClients*simlength) ))
+
+            newar = [item for sublist in l for item in sublist] + [0] * ( (30 - numClients)*240)
+            print("len newar {}".format(len(newar)))
+            #serverbytedata[serverid*(30*simlength) + 1] = newar
+            serverbytedata.extend(newar)
+
+            # for clientkey, clientval in data['nodes'][key].iteritems():
+            #     serverbytedata[]
+            
             #print("Server id = {}".format(serverid))
-            for clientkey, clientval in data['nodes'][key].iteritems():
-            	if (re.search("webclient", clientkey) is None and re.search("bulkclient", clientkey) is None):
-            		if (int(clientkey) >= 1200):
-            			serverbytedata[(int(clientkey) + 1) - simStart + serverid * (simlength + 1)] = int(clientval)
-            			#print("for server id: {} client key: {} clientval {}".format(serverid, clientkey, clientval))
-             	else:
-             		#print("its a check! {}".format(clientkey))
-             		if (int(clientval) == 1 and re.search("webclient", clientkey) is not None):
-             			serverbytedata[serverid * (simlength + 1) ] = serverbytedata[serverid * (simlength + 1)] + 1
-             		if (int(clientval) == 1 and re.search("bulkclient", clientkey) is not None):
-             			serverbytedata[serverid * (simlength + 1)] = serverbytedata[serverid * (simlength + 1)] + 1
+            # for clientkey, clientval in data['nodes'][key].iteritems():
+            # 	if (re.search("webclient", clientkey) is None and re.search("bulkclient", clientkey) is None):
+            # 		serverbytedata[(int(clientkey) + 1) + serverid * (simlength + 1)] = int(clientval)
+            # 			#print("for server id: {} client key: {} clientval {}".format(serverid, clientkey, clientval))
+            #  	else:
+            #  		serverbytedata[serverid * (simlength + 1) ] = clientval
 
              #   print(clientkey)
                     # print(timestamp)
@@ -60,7 +72,7 @@ def main(argv):
                     #     serverbytedata[int(timestamp) - simStart + serverid * simlength] += int(numBytes)
      
 
-
+        print("Serverdata = {} {}".format(len(serverbytedata), serverbytedata))
         np.savetxt('serverdata.txt', serverbytedata, fmt="%i")
 
 

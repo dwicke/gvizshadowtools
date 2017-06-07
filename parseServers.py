@@ -35,9 +35,13 @@ def main(argv):
 
 
         serverbytedata = []#[0] * (30*simlength + 1) * numservers
-        print("Serverdata = {}".format(len(serverbytedata)))
-
-
+        maxsize = 0
+        for key, clientdata in data['nodes'].iteritems():
+            numclients = len(data['nodes'][key].items()) - 1
+            if numclients > maxsize:
+                maxsize = numclients
+        maxsize = maxsize + 1
+        print ("size of each TS = {}".format(maxsize))
         for key, clientdata in data['nodes'].iteritems():
           
             serverid = int(key.split("server")[1]) - 1
@@ -52,8 +56,8 @@ def main(argv):
             l = r.values()
             #print("start {} and end {}".format(serverid*(30*simlength) + 1, serverid*(30*simlength) + 1 + (numClients*simlength) ))
 
-            newar = [item for sublist in l for item in sublist] + [0] * ( (30 - numClients)*240)
-            print("len newar {}".format(len(newar)))
+            newar = [item for sublist in l for item in sublist] + [0] * ( (maxsize - numClients)*240)
+            #print("len newar {}".format(len(newar)))
             #serverbytedata[serverid*(30*simlength) + 1] = newar
             serverbytedata.extend(newar)
 
@@ -74,10 +78,9 @@ def main(argv):
                     #     print(numBytes)
                     #     serverbytedata[int(timestamp) - simStart + serverid * simlength] += int(numBytes)
      
-
-        print("Serverdata = {} {}".format(len(serverbytedata), serverbytedata))
+        serverbytedata.insert(0, maxsize)
+        #print("Serverdata = {} {}".format(len(serverbytedata), serverbytedata))
         np.savetxt('serverdata.txt', serverbytedata, fmt="%i")
-
 
 
 

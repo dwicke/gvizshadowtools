@@ -11,22 +11,28 @@ def main(argv):
 		td2 =  open('rpmAnomolousServerdata.txt', 'w')
 		count = 0
 		data = ""
+		lineNum = 0
+		tsLen = 0
 		classtype = 0
 		for line in f:
-			count = count + 1
-			data += " " + line.strip("\n")
-			print(" count = {}".format(count))
-			if count == 1:
-				classtype = line.strip("\n")
-				print("class is {}".format(classtype))
-			if (count % 7201) == 0:
+			if lineNum == 0:
+				tsLen = int(line) * 240 + 1
+				lineNum = 1
+			else:
+				count = count + 1
+				data += " " + line.strip("\n")
+				print(" count = {}".format(count))
+				if count == 1:
+					classtype = line.strip("\n")
+					print("class is {}".format(classtype))
+				if (count % tsLen) == 0:
 
-				count = 0
-				if int(classtype) == 1:
-					td.write(data + "\n")
-				else:
-					td2.write(data + "\n")
-				data = ""
+					count = 0
+					if int(classtype) == 1:
+						td.write(data + "\n")
+					else:
+						td2.write(data + "\n")
+					data = ""
 		td.close()
 		td2.close()
 
